@@ -1,8 +1,9 @@
 use core::time::Duration;
-use rodio::{OutputStream, source::Source};
+use rodio::source::Source;
 
+const WAVE_TABLE_SIZE: usize = 64;
 
-struct WavetableOscillator {
+pub struct WavetableOscillator {
     sample_rate: u32,
     wave_table: Vec<f32>,
     index: f32,
@@ -18,8 +19,26 @@ impl WavetableOscillator {
             index_increment: 0.0,
         };
     }
+
+    pub fn preset_sin(sample_rate: u32) -> WavetableOscillator {
+        let mut wave_table: Vec<f32> = Vec::with_capacity(WAVE_TABLE_SIZE);
+        for n in 0..WAVE_TABLE_SIZE {
+            wave_table.push((2.0 * std::f32::consts::PI * n as f32 / WAVE_TABLE_SIZE as f32).sin());
+        }
+        return WavetableOscillator::new(sample_rate, wave_table);
+    }
+
+    pub fn preset_saw(sample_rate: u32) -> WavetableOscillator {
+        let mut wave_table: Vec<f32> = Vec::with_capacity(WAVE_TABLE_SIZE);
+        let middle: f32 = WAVE_TABLE_SIZE as f32 / 2 as f32;
+        for n in 0..WAVE_TABLE_SIZE {
+            let is_upper_half: f32 = (n >= (WAVE_TABLE_SIZE / 2)) as i32 as f32;
+            wave_table.push(((n as f32 % (middle)) / (middle - 1 as f32)) - is_upper_half);
+        }
+        return WavetableOscillator::new(sample_rate, wave_table);
+    }
     
-    fn set_frequency(&mut self, frequency: f32) {
+    pub fn set_frequency(&mut self, frequency: f32) {
         self.index_increment = frequency * self.wave_table.len() as f32 
                                / self.sample_rate as f32;
     }
@@ -69,21 +88,4 @@ impl Iterator for WavetableOscillator {
     }
 }
 
-fn main() {
-    let wave_table_size = 64;
-    let mut wave_table: Vec<f32> = Vec::with_capacity(wave_table_size);
-    
-    for n in 0..wave_table_size {
-        wave_table.push((2.0 * std::f32::consts::PI * n as f32 / wave_table_size as f32).sin());
-    }
-    
-    let mut oscillator = WavetableOscillator::new(44100, wave_table);
-    
-    oscillator.set_frequency(440.0);
-    
-    let (_stream, stream_handle) = OutputStream::try_default().unwrap();
-    
-    let _result = stream_handle.play_raw(oscillator.convert_samples());
 
-    std::thread::sleep(std::time::Duration::from_secs(5));
-}
