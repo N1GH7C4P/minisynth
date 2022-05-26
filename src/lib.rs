@@ -107,13 +107,3 @@ impl Iterator for WavetableOscillator {
         return Some(self.get_sample());
     }
 }
-
-/*
-impl Copy for WavetableOscillator {}
-
-impl Clone for WavetableOscillator {
-    fn clone(&self) -> Self {
-        *self
-    }
-}
-*/
