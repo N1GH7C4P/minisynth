@@ -9,10 +9,26 @@ pub struct Track {
 }
 
 impl Track {
-	pub fn new(stream_handle: &OutputStreamHandle) -> Track {
+	pub fn new(stream_handle: &OutputStreamHandle, instrument: &str) -> Track {
+	    let oscillator = if instrument.eq("sine") {
+		WavetableOscillator::preset_sin(44100)
+	    }
+	    else if instrument.eq("saw") {
+		WavetableOscillator::preset_saw(44100)
+	    }
+	    else if instrument.eq("square") {
+		WavetableOscillator::preset_sqr(44100)
+	    }
+	    else if instrument.eq("triangle") {
+		WavetableOscillator::preset_tri(44100)
+	    }
+	    else {
+		WavetableOscillator::preset_sin(44100)
+	    };
+
 	    let track = Track {
 		sink: Sink::try_new(&stream_handle).unwrap(),
-		oscillator: WavetableOscillator::preset_sin(44100),
+		oscillator: oscillator,
 		notes: Vec::new()
 	    };
 	    track

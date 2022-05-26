@@ -36,7 +36,7 @@ fn set_tracks(tracks: &mut Vec<Track>, desc: &Vec<String>, stream_handle: &Outpu
 	let tmp_arr: Vec<&str> = desc[1].as_str().split(' ').collect();
 	let instruments: Vec<&str> = tmp_arr[1].split(',').collect();
 	for instrument in instruments.iter() {
-		tracks.push(Track::new(&stream_handle));
+		tracks.push(Track::new(&stream_handle, &instrument));
 	}
 }
 
