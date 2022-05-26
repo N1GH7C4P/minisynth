@@ -5,7 +5,9 @@ use std::time::Duration;
 pub struct Track {
 	sink: Sink,
 	oscillator: WavetableOscillator,
-	notes: Vec<f32>
+	notes: Vec<(f32, f32)>,
+	octave: u32,
+	duration: f32
 }
 
 impl Track {
@@ -29,21 +31,66 @@ impl Track {
 	    let track = Track {
 		sink: Sink::try_new(&stream_handle).unwrap(),
 		oscillator: oscillator,
-		notes: Vec::new()
+		notes: Vec::new(),
+		octave: 4,
+		duration: 1.0
 	    };
 	    track
 	}
 
-	pub fn add_note(&mut self, frequency: f32) {
-		self.notes.push(frequency);
+	fn add_note(&mut self, frequency: f32, duration: f32) {
+		self.notes.push((frequency, duration));
 	}
 
-	pub fn emit(&mut self, tempo: u32) {
-		let beat = 60.0 / tempo as f32;
+	fn update_duration(&mut self, note: &String) -> String {
+		let index = note.find('/').unwrap() + 1;
+		self.duration = note.get(index..).unwrap().parse::<f32>().unwrap();
+		let test: Vec<&str> = note.as_str().split('/').collect();
+		test[0].to_string()
+	}
+
+	fn update_note(&mut self, note: &String) -> String {
+		if note.len() == 1 {
+			if note.chars().nth(0).unwrap() == 'r' {
+				return note.to_string();
+			}
+			let key = format!("{}{}", note, self.octave);
+			return key;
+		}
+		if note.len() == 2 && !note.chars().nth(1).unwrap().is_digit(10) {
+			let key = format!("{}{}", note, self.octave);
+			return key;
+		}
+		if note.len() == 2 && note.chars().nth(1).unwrap().is_digit(10) {
+			self.octave = note.chars().nth(1).unwrap().to_digit(10).unwrap();
+			let key = format!("{}", note);
+			return key;
+		}
+		self.octave = note.chars().nth(2).unwrap().to_digit(10).unwrap();
+		let key = format!("{}", note);
+		return key
+	}
+	
+	pub fn add_notes(&mut self, notes: Vec<String>, tempo: u32) {
+		println!("{:?}", notes);
+		let beat: f32 = 60.0 / tempo as f32;
+		for note in notes.iter() {
+			if note.find('/').is_some() {
+				let key: &String = &self.update_duration(note);
+				let res = self.update_note(key);
+				println!("{} dur {}", res, beat * self.duration);
+				continue;
+			}
+			let res = self.update_note(note);
+			println!("{} dur {}", res, beat * self.duration);
+		}
+	}
+
+	pub fn emit(&mut self) {
 		for n in 0..self.notes.len() {
 			let mut tmp = self.oscillator.clone();
-			tmp.set_frequency(self.notes[n]);
-			self.sink.append(tmp.take_duration(Duration::from_secs_f32(beat)));
+			tmp.set_frequency(self.notes[n].0);
+			self.sink.append(tmp.take_duration(Duration::from_secs_f32(self.notes[n].1)));
 		}
 	}
 	
