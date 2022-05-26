@@ -3,6 +3,7 @@ use rodio::source::Source;
 
 const WAVE_TABLE_SIZE: usize = 64;
 
+#[derive(Clone)]
 pub struct WavetableOscillator {
     sample_rate: u32,
     wave_table: Vec<f32>,
@@ -34,6 +35,25 @@ impl WavetableOscillator {
         for n in 0..WAVE_TABLE_SIZE {
             let is_upper_half: f32 = (n >= (WAVE_TABLE_SIZE / 2)) as i32 as f32;
             wave_table.push(((n as f32 % (middle)) / (middle - 1 as f32)) - is_upper_half);
+        }
+        return WavetableOscillator::new(sample_rate, wave_table);
+    }
+
+    pub fn preset_sqr(sample_rate: u32) -> WavetableOscillator {
+        let mut wave_table: Vec<f32> = Vec::with_capacity(WAVE_TABLE_SIZE);
+        let middle = WAVE_TABLE_SIZE / 2;
+        for n in 0..WAVE_TABLE_SIZE {
+	    wave_table.push(if n < middle { 1.0 } else { -1.0 });
+        }
+        return WavetableOscillator::new(sample_rate, wave_table);
+    }
+
+    pub fn preset_tri(sample_rate: u32) -> WavetableOscillator {
+        let mut wave_table: Vec<f32> = Vec::with_capacity(WAVE_TABLE_SIZE);
+        for n in 0..WAVE_TABLE_SIZE {
+	    let x: f32 = (n as f32 / WAVE_TABLE_SIZE as f32) * 2.0;
+	    let wave = 1.0 - 4.0 * (0.5 - (0.5 * x + 0.25).fract()).abs();
+	    wave_table.push(wave);
         }
         return WavetableOscillator::new(sample_rate, wave_table);
     }
@@ -88,4 +108,12 @@ impl Iterator for WavetableOscillator {
     }
 }
 
+/*
+impl Copy for WavetableOscillator {}
 
+impl Clone for WavetableOscillator {
+    fn clone(&self) -> Self {
+        *self
+    }
+}
+*/
