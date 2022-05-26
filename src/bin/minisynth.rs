@@ -2,6 +2,7 @@ use rodio::{OutputStream, OutputStreamHandle};
 use minisynth::track::Track;
 use std::env;
 use std::fs;
+use std::str::FromStr;
 
 fn stream(mut tracks: Vec<Track>, tempo: u32) {
 	for t in 0..tracks.len() {
@@ -29,7 +30,9 @@ fn get_desc(filename: &String) -> Vec<String> {
 
 fn get_tempo(desc: &Vec<String>) -> u32 {
 	let tempo_str: Vec<&str> = desc[0].as_str().split(' ').collect();
-	tempo_str[1].parse().unwrap()
+	println!("tempo: {}",tempo_str[1]);
+	let tempo: u32 = tempo_str[1].trim().parse::<u32>().unwrap();
+	return tempo;
 }
 
 fn set_tracks(tracks: &mut Vec<Track>, desc: &Vec<String>, stream_handle: &OutputStreamHandle) {
@@ -50,6 +53,7 @@ fn main() {
 	let mut tracks : Vec<Track> = Vec::new();
 	let desc: Vec<String> = get_desc(&args[1]);
 	let tempo = get_tempo(&desc);
+	print!("{}", tempo);
 
 	let (_stream, stream_handle) = OutputStream::try_default().unwrap();
 	println!("len {}", tracks.len());
