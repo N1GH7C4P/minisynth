@@ -1,6 +1,7 @@
 cargo build --release
-./target/release/minisynth
-./target/release/minisynth file1 file2
+cp ./target/release/minisynth ./
+#./target/release/minisynth
+#./target/release/minisynth file1 file2
 #./target/release/minisynth examples/Simple_Tune.synth
 #./target/release/minisynth examples/Prelude.synth
 #./target/release/minisynth examples/Imperial_March.synth
