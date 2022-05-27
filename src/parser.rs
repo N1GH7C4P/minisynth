@@ -3,12 +3,13 @@ pub mod parser {
 	use rodio::OutputStreamHandle;
 	use crate::track::Track;
 	use regex::Regex;
+	use std::collections::HashMap;
 
 	pub fn get_desc(filename: &String) -> Vec<String> {
 		let contents = fs::read_to_string(&filename).expect("Something went wrong reading the file");
 		let mut desc: Vec<String> = contents.as_str().split('\n').map(str::to_string).collect();
 		for index in (0..desc.len()).rev() {
-			if desc[index].len() == 0 {
+			if desc[index].len() < 2 {
 				desc.remove(index);
 				continue;
 			}
@@ -42,7 +43,7 @@ pub mod parser {
 		trimmed_line.as_str().split(' ').map(|s| s.to_string()).collect()
 	}
 
-	pub fn set_notes(tracks: &mut Vec<Track>, desc: &Vec<String>, tempo: u32) {
+	pub fn set_notes(tracks: &mut Vec<Track>, desc: &Vec<String>, tempo: u32, key_freq: &HashMap<String, f32>) {
 		let mut track_num: u32;
 		for (index, line) in desc.iter().enumerate() {
 			if index < 2 {
@@ -50,7 +51,7 @@ pub mod parser {
 			}
 			track_num = line.chars().nth(0).unwrap().to_digit(10).unwrap() - 1;
 			let note_arr: Vec<String> = get_note_arr(line);
-			tracks[track_num as usize].add_notes(note_arr, tempo);
+			tracks[track_num as usize].add_notes(note_arr, tempo, key_freq);
 		}
 	}
 }

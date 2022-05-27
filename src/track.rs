@@ -1,6 +1,7 @@
 use crate::WavetableOscillator;
 use rodio::{OutputStreamHandle, source::Source, Sink};
 use std::time::Duration;
+use std::collections::HashMap;
 
 pub struct Track {
 	sink: Sink,
@@ -71,18 +72,18 @@ impl Track {
 		return key
 	}
 	
-	pub fn add_notes(&mut self, notes: Vec<String>, tempo: u32) {
+	pub fn add_notes(&mut self, notes: Vec<String>, tempo: u32, key_freq: &HashMap<String, f32>) {
 		println!("{:?}", notes);
 		let beat: f32 = 60.0 / tempo as f32;
 		for note in notes.iter() {
 			if note.find('/').is_some() {
 				let key: &String = &self.update_duration(note);
 				let res = self.update_note(key);
-				println!("{} dur {}", res, beat * self.duration);
+				self.add_note(key_freq[&res], beat * self.duration);
 				continue;
 			}
 			let res = self.update_note(note);
-			println!("{} dur {}", res, beat * self.duration);
+			self.add_note(key_freq[&res], beat * self.duration);
 		}
 	}
 

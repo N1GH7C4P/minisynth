@@ -2,6 +2,7 @@ use core::time::Duration;
 use rodio::source::Source;
 pub mod track;
 pub mod parser;
+pub mod keymap;
 
 const WAVE_TABLE_SIZE: usize = 64;
 
