@@ -23,10 +23,10 @@ fn main() {
 	let (_stream, stream_handle) = OutputStream::try_default().unwrap();
 	let keymap = Keymap::new("assets/notes_freq_lower.json");
 
-	let mut tracks : Vec<Track> = Vec::new();
+	let tracks : Vec<Track> = Vec::new();
 	let desc: Vec<String> = parser::get_desc(&args[1]);
 	let tempo = parser::get_tempo(&desc);
 	let mut tracks = parser::get_tracks(&desc, &stream_handle);
 	parser::set_notes(&mut tracks, &desc, tempo, keymap.get());
-//	stream(tracks);
+	stream(tracks);
 }

@@ -1,5 +1,5 @@
 use std::fs;
-use serde_json::{Result, Value};
+use serde_json::{Value};
 use std::collections::HashMap;
 
 pub struct Keymap {
