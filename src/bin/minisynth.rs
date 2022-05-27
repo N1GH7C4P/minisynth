@@ -6,7 +6,10 @@ use std::env;
 
 fn stream(mut tracks: Vec<Track>) {
 	for t in 0..tracks.len() {
-	    tracks[t].emit();
+	    tracks[t].load_sink();
+	}
+	for t in 0..tracks.len() {
+	    tracks[t].play();
 	}
 	for t in 0..tracks.len() {
 	    tracks[t].sleep_until_end();

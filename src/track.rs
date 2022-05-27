@@ -36,6 +36,7 @@ impl Track {
 		octave: 4,
 		duration: 1.0
 	    };
+	    track.sink.pause();
 	    track
 	}
 
@@ -86,12 +87,16 @@ impl Track {
 		}
 	}
 
-	pub fn emit(&mut self) {
+	pub fn load_sink(&mut self) {
 		for n in 0..self.notes.len() {
 			let mut tmp = self.oscillator.clone();
 			tmp.set_frequency(self.notes[n].0);
 			self.sink.append(tmp.take_duration(Duration::from_secs_f32(self.notes[n].1)));
 		}
+	}
+	
+	pub fn play(&mut self) {
+		self.sink.play();
 	}
 	
 	pub fn sleep_until_end(&mut self)
