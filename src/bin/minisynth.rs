@@ -28,5 +28,6 @@ fn main() {
 	let tempo = parser::get_tempo(&desc);
 	let mut tracks = parser::get_tracks(&desc, &stream_handle);
 	parser::set_notes(&mut tracks, &desc, tempo, keymap.get());
+	println!("And begin!");
 	stream(tracks);
 }

@@ -73,7 +73,6 @@ impl Track {
 	}
 	
 	pub fn add_notes(&mut self, notes: Vec<String>, tempo: u32, key_freq: &HashMap<String, f32>) {
-		println!("{:?}", notes);
 		let beat: f32 = 60.0 / tempo as f32;
 		for note in notes.iter() {
 			if note.find('/').is_some() {

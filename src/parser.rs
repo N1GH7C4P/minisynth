@@ -49,7 +49,8 @@ pub mod parser {
 			if index < 2 {
 				continue;
 			}
-			track_num = line.chars().nth(0).unwrap().to_digit(10).unwrap() - 1;
+			let tmp: Vec<&str> = line.as_str().split(':').collect();
+			track_num = tmp[0].parse::<u32>().unwrap() - 1;
 			let note_arr: Vec<String> = get_note_arr(line);
 			tracks[track_num as usize].add_notes(note_arr, tempo, key_freq);
 		}
