@@ -8,6 +8,7 @@ pub mod parser {
 	pub fn get_desc(filename: &String) -> Vec<String> {
 		let contents = fs::read_to_string(&filename).expect("Something went wrong reading the file");
 		let mut desc: Vec<String> = contents.as_str().split('\n').map(str::to_string).collect();
+        println!("{}", desc[0]);
 		for index in (0..desc.len()).rev() {
 			if desc[index].len() < 2 {
 				desc.remove(index);
