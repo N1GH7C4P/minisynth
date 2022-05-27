@@ -1,11 +1,12 @@
-cargo build
-./target/debug/minisynth
-./target/debug/minisynth file1 file2
-#./target/debug/minisynth examples/Simple_Tune.synth
-#./target/debug/minisynth examples/Prelude.synth
-#./target/debug/minisynth examples/Imperial_March.synth
-#./target/debug/minisynth examples/Super_Mario.synth
-#./target/debug/minisynth examples/Cantina_Band.synth
-./target/debug/minisynth examples/Toccata.synth
-#./target/debug/minisynth examples/Nightcall.synth
-#./target/debug/minisynth examples/test.synth
+cargo build --release
+cp ./target/release/minisynth ./
+#./target/release/minisynth
+#./target/release/minisynth file1 file2
+#./target/release/minisynth examples/Simple_Tune.synth
+#./target/release/minisynth examples/Prelude.synth
+#./target/release/minisynth examples/Imperial_March.synth
+#./target/release/minisynth examples/Super_Mario.synth
+./target/release/minisynth examples/Cantina_Band.synth
+#./target/release/minisynth examples/Toccata.synth
+#./target/release/minisynth examples/Nightcall.synth
+#./target/release/minisynth examples/test.synth
